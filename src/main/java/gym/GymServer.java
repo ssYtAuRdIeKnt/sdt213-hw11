@@ -35,7 +35,15 @@ public class GymServer {
         if (method.equals("GET") && parts.length == 2) {
             send(exchange, 200, exercises.toString());
         } else if (method.equals("GET")) {
-            String name = exercises.get(Integer.parseInt(parts[2]));
+            int id;
+            try {
+                id = Integer.parseInt(parts[2]);
+            } catch (NumberFormatException e) {
+                // The id in the URL is not a number, e.g. "/exercises/abc"
+                send(exchange, 400, "Bad request: id must be a number");
+                return;
+            }
+            String name = exercises.get(id);
             if (name == null) {
                 send(exchange, 404, "Not found");
             } else {
